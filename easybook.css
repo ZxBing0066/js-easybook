@@ -1,0 +1,54 @@
+.easybookPage.animate {
+    z-index: 10 !important;
+    -webkit-transform-origin: 0px 50% 0px;
+    -webkit-animation-name: easybookAnimate;
+    -webkit-animation-duration: 1000ms;
+    animation-name: easybookAnimate;
+    animation-duration: 1000ms;
+}
+.easybookPage.animateBack {
+    z-index: 10 !important;
+    -webkit-transform-origin: 0px 50% 0px;
+    -webkit-animation-name: easybookAnimateBack;
+    -webkit-animation-duration: 1000ms;
+    animation-name: easybookAnimateBack;
+    animation-duration: 1000ms;
+}
+.easybookPage.animateCover {
+    z-index: 9;
+}
+.easybookPage.current {
+    z-index: 8;
+}
+@-webkit-keyframes easybookAnimate {
+    0% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+    100% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateY(-90deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+}
+@keyframes easybookAnimate {
+    0% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+    100% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateY(-90deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+}
+@-webkit-keyframes easybookAnimateBack {
+    0% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateY(-90deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+    100% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+}
+@keyframes easybookAnimateBack {
+    0% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateY(-90deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+    100% {
+        -webkit-transform: perspective(3000px) rotateX(0deg) rotateZ(0deg) translateX(0px) skewX(0deg);
+    }
+}
