@@ -11,12 +11,13 @@
         };
         this.isAnimating = false;
         this.enabled = true;
+        this._events = {};
         this.init();
     };
     var proto = Easybook.prototype;
     proto.init = function() {
         this._initDom();
-        this._initEvent();
+        this.enable();
     };
     proto._initDom = function() {
         this.children = this.options.childSelector ? this.wrapper.find(this.options.childSelector) : this.wrapper.children();
@@ -25,17 +26,19 @@
         this.currentPageDom = this._getCurrentPageDom();
         this.currentPageDom.addClass('current');
     };
-    proto._initEvent = function() {
+    proto._bindEvent = function() {
         this.wrapper.on('swipeLeft', function() {
             this.next();
         }.bind(this)).on('swipeRight', function() {
             this.pre();
-        }.bind(this)).on('click', function(e) {
+        }.bind(this));
+        this.options.clickEnable && this.wrapper.on('click', function(e) {
             if (e.layerX <= this.wrapper.width() / 3) {
                 this.pre();
             } else if (e.layerX >= this.wrapper.width() * 2 / 3) {
                 this.next();
-            }
+            };
+            e.preventDefault();
         }.bind(this));
     };
     proto._removeEvent = function() {
@@ -62,14 +65,17 @@
         this.currentPageDom = this._getCurrentPageDom();
         this._start();
     };
-    this.enable = function() {
+    proto.enable = function() {
         this.enabled = true;
+        this._bindEvent();
     };
-    this.disable = function() {
+    proto.disable = function() {
         this.enabled = false;
+        this._removeEvent();
     };
     proto.refresh = function() {
         this.children = this.options.childSelector ? this.wrapper.find(this.options.childSelector) : this.wrapper.children();
+        this.children.addClass('easybookPage');
     };
     proto.destory = function() {
         this._removeEvent();
@@ -94,15 +100,22 @@
     proto._animateEnd = function() {
         console.log('---animateEnd---');
         if (this.nextPageIndex > this.currentPageIndex) {
-            this.currentPageDom.removeClass('animate').off('webkitAnimationEnd');
+            this.currentPageDom.removeClass('animate').off('webkitAnimationEnd').css({
+                '-webkit-animation-duration': null,
+                'animation-duration': null
+            });
             this.nextPageDom.removeClass('animateCover');
         } else {
-            this.nextPageDom.removeClass('animateBack').off('webkitAnimationEnd');
+            this.nextPageDom.removeClass('animateBack').off('webkitAnimationEnd').css({
+                '-webkit-animation-duration': null,
+                'animation-duration': null
+            });
             this.currentPageDom.removeClass('animateCover');
         };
     };
     proto._start = function() {
         console.log('---start---');
+        this._execEvent('start');
         this.isAnimating = true;
         this._animate();
     };
@@ -115,6 +128,7 @@
         this.currentPageIndex = this.nextPageIndex;
         this.nextPageIndex = null;
         this.isAnimating = false;
+        this._execEvent('end', this.currentPageIndex);
         console.log('---end---');
     };
     proto._getCurrentPageDom = function() {
@@ -122,6 +136,34 @@
     };
     proto._getPageDom = function(pageIndex) {
         return this.children.eq(pageIndex);
+    };
+    proto.on = function(type, fn) {
+        if (!this._events[type]) {
+            this._events[type] = [];
+        }
+        this._events[type].push(fn);
+    };
+    proto.off = function(type, fn) {
+        if (!this._events[type]) {
+            return;
+        }
+        var index = this._events[type].indexOf(fn);
+        if (index > -1) {
+            this._events[type].splice(index, 1);
+        }
+    };
+    proto._execEvent = function(type) {
+        if (!this._events[type]) {
+            return;
+        }
+        var i = 0,
+            l = this._events[type].length;
+        if (!l) {
+            return;
+        }
+        for (; i < l; i++) {
+            this._events[type][i].apply(this, [].slice.call(arguments, 1));
+        }
     };
     if (typeof module != 'undefined' && module.exports) {
         module.exports = Easybook;
